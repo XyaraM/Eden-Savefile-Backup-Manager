@@ -1,4 +1,4 @@
-# My personal savefile manager for the Eden emulator
+# My personal savefile backup manager for the Eden emulator
 
 Why?. Because i made a little whoops and erased some my savefiles on accident and instead of triggering and getting mad, i decided to make a python script for backing up the savefiles.
 
