@@ -73,8 +73,12 @@ def howManyAreThere():
         return detectIfSame(len(list(backups_dir.iterdir())))
 
 
-def backupSavefiles():
-    fileName = str(howManyAreThere()) + " - " + date + ".tar.bz2"
+def backupSavefiles(isAutomatic: bool):
+    fileName: str
+    if isAutomatic:
+        fileName = str(howManyAreThere()) + " - " + date + "-Automatic" + ".tar.bz2"
+    else:
+        fileName = str(howManyAreThere()) + " - " + date + ".tar.bz2"
     filePath = edenPath + "nand/user/save/"
     if os.path.exists(filePath):
         with tarfile.open(fileName, "w:bz2") as tar:
@@ -100,7 +104,7 @@ def restoreBackup(backupNumber):
     rmPath = edenPath + "nand/user/save/"
     extractPath = edenPath + "nand/user/save/"
     print("\nThe current savefiles are gonna be backed up!\n")
-    backupSavefiles()
+    backupSavefiles(True)
     if os.path.exists(rmPath):
         for i in os.listdir(rmPath):
             shutil.rmtree(rmPath + i)

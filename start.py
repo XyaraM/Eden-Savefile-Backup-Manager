@@ -1,41 +1,48 @@
-from shutil import which
+import subprocess
+import sys
 
 import backup
 
 isProgramActive: bool = True
 isFirstEntry: bool = False
+arguments = sys.argv[1:]
 
-while isProgramActive:
-    if not isFirstEntry:
-        print(
-            "*_-.EDEN SAVEFILE BACKUP MANAGER.-_*\nType 'help' if you want to display the help message"
-        )
-        isFirstEntry = True
-    entry = input("\nInput: ")
+usage_message = """
+Usage: start.py [OPTIONS] number
 
-    if entry == "help":
-        print(
-            "\nListing the backups: list\nCreate a new backup: create\nDelete a backup: delete\nRestore a backup: restore\nExit the program: exit"
-        )
-    elif entry == "list":
-        backup.listBackups()
-    elif entry == "create":
-        backup.backupSavefiles()
-    elif entry == "delete":
-        whichBackupToDelete = input("Which backup do you want to delete?: ")
-        if whichBackupToDelete.isdigit():
-            backup.deleteBackup(int(whichBackupToDelete))
-        else:
-            print("\nThe input must be a digit!")
-    elif entry == "restore":
-        whichBackupToRestore = input("Which backup do you want to restore?: ")
-        if whichBackupToRestore.isdigit():
-            backup.restoreBackup(int(whichBackupToRestore))
-        else:
-            print("\nThe input must be a digit!")
-    elif entry == "exit":
-        isProgramActive = False
-    else:
-        print(
-            "\nListing the backups: list\nCreate a new backup: create\nDelete a backup: delete\nRestore a backup: restore\nExit the program: exit"
-        )
+OPTIONS:
+    interact    - Enables the interactive mode
+    list        - List your backups
+    create      - Create a new backup
+    delete      - Delete your backup
+    restore     - Restore your backup
+"""
+
+
+def detectArgument(arg: str):
+    match arg:
+        case "create":
+            backup.backupSavefiles(False)
+        case "list":
+            backup.listBackups()
+        case "delete":
+            if len(arguments) > 1 and arguments[1].isdigit():
+                backup.deleteBackup(arguments[1])
+            else:
+                print("Select the number of the backup.")
+        case "restore":
+            if len(arguments) > 1 and arguments[1].isdigit():
+                backup.restoreBackup(arguments[1])
+            else:
+                print("Select the number of the backup.")
+        case "interact":
+            subprocess.run("venv/bin/python3 interactive.py", shell=True)
+
+
+if len(arguments) == 0:
+    print(usage_message)
+else:
+    try:
+        detectArgument(arguments[0])
+    except IndexError:
+        pass
